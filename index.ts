@@ -2,7 +2,10 @@ import { findAndParseConfig } from "@graphql-mesh/cli";
 import { getMesh } from "@graphql-mesh/runtime";
 import { join } from "path";
 import { GetPoolsSushiLiveDocument } from "./clients/sushi_rc/.graphclient";
-import { GetPoolsUniswapLiveDocument } from "./clients/uniswap_rc/.graphclient";
+import {
+  GetPoolsUniswapLiveDocument,
+  subscribe,
+} from "./clients/uniswap_rc/.graphclient";
 let DEX_TO_DOCS: any[] = [];
 
 DEX_TO_DOCS.push({
@@ -30,7 +33,8 @@ DEX_TO_DOCS.push({
       skip: 0,
       totalLocked: 5000,
     };
-    const repeater = await mesh.subscribe(dex.liveDoc, filter, {}, dex.name);
+    const repeater = await subscribe(GetPoolsUniswapLiveDocument, filter);
+    // const repeater = await mesh.subscribe(dex.liveDoc, filter, {}, dex.name);
     const iterator = repeater[Symbol.asyncIterator]();
 
     while (true) {
@@ -50,7 +54,15 @@ DEX_TO_DOCS.push({
         external: bytesToMb(used.external),
         stack: bytesToMb(used.rss - used.heapTotal),
       };
-      console.log(new Date().toLocaleDateString());
+      console.log(
+        new Date().toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "long",
+          minute: "numeric",
+          second: "numeric",
+          hour: "numeric",
+        })
+      );
       console.table(row);
       console.log(
         "new data from graph (dex/v2/v3)",
