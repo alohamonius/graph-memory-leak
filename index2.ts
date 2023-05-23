@@ -10,7 +10,6 @@ import {
     totalLocked: 5000,
   };
   const repeater = await subscribe(GetPoolsUniswapLiveDocument, filter);
-  // const repeater = await mesh.subscribe(dex.liveDoc, filter, {}, dex.name);
   const iterator = repeater[Symbol.asyncIterator]();
 
   while (true) {
